@@ -1,8 +1,20 @@
 #include <glew.h>
 #include <glfw3.h>
+#include <cstdio>
+
+#include "src/graphics/shader.h"
+
+using namespace std;
+using namespace engine1;
 
 int main(void)
 {
+
+
+	//read from file
+	
+
+	return 0;
 	float triangle[] = {
 	-0.5f, -0.5f, 
 	 0.5f, -0.5f, 
@@ -39,7 +51,6 @@ int main(void)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
 
-
 	const char* shader_vertex_source = R"(#version 330 core
 		layout(location = 0) in vec3 aPos;
 		void main()
@@ -47,10 +58,8 @@ int main(void)
 		gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
 	})";
 
-	unsigned int shader_vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(shader_vertex, 1, &shader_vertex_source, NULL);
-	glCompileShader(shader_vertex);
-
+	
+	
 
 	const char* shader_fragment_source = R"(#version 330 core
 out vec4 FragColor;
@@ -59,17 +68,11 @@ void main()
 {
     FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 } )";
+	
+	
 
-	unsigned int shader_fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(shader_fragment, 1, &shader_fragment_source, NULL);
-	glCompileShader(shader_fragment);
-
-	unsigned int shader_program = glCreateProgram();
-	glAttachShader(shader_program, shader_vertex);
-	glAttachShader(shader_program, shader_fragment);
-	glLinkProgram(shader_program);
-	glUseProgram(shader_program);
-
+	shader myShader(shader_vertex_source, shader_fragment_source);
+	myShader.use();
 
 	while (!glfwWindowShouldClose(window))
 	{
