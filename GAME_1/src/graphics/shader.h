@@ -2,6 +2,7 @@
 #include <glew.h>
 #include <glfw3.h>
 #include <cstdio>
+#include <string>
 
 namespace engine1 {
 
@@ -17,7 +18,7 @@ namespace engine1 {
 	public:
 		
 		shader(const char* vertex, const char* fragment);
-		
+		shader(const char* shader_path);
 		void use();
 
 	};
