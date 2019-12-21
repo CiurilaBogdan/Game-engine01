@@ -24,7 +24,8 @@ namespace engine1 {
 		glAttachShader(program_id, fragment_id);
 		glLinkProgram(program_id);
 
-
+		glDeleteShader(vertex_id);
+		glDeleteShader(fragment_id);
 	}
 
 	shader::shader(const char* shader_path)
