@@ -77,10 +77,16 @@ namespace engine1 {
 
 		}
 
-		void shader::use()
+		void shader::set_active()const
 		{
 			glUseProgram(program_id);
 		}
+
+		void shader::set_inactive()const
+		{
+			//glUseProgram(program_id);
+		}
+
 
 
 	}

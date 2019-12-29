@@ -4,6 +4,7 @@
 
 
 #include "src/graphics/shader.h"
+#include "src/graphics/texture.h"
 #include "src/vendor/stb_image.h"
 
 using namespace std;
@@ -11,12 +12,12 @@ using namespace engine1;
 
 int main(void)
 {
-	
+	float zoom_level = 2.0f;
 	float vertices[] = {
-	     0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   0.0f, 1.0f
+	     1.0f,  1.0f, 0.0f,   1.0f*zoom_level, 1.0f*zoom_level, // top right
+		 1.0f, -1.0f, 0.0f,   1.0f*zoom_level, 0.0f, // bottom right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, // bottom left
+		-1.0f,  1.0f, 0.0f,   0.0f, 1.0f*zoom_level
 	};
 
 	unsigned int indices[] = { 
@@ -63,32 +64,12 @@ int main(void)
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
 
-	unsigned char* texture_buffer;
-
-	stbi_set_flip_vertically_on_load(1);
-	int width, height, BPP;
-	texture_buffer = stbi_load("../resources/tropical.jpg", &width, &height, &BPP, 0);
-	if (!texture_buffer) {
-		printf("TEXTURE ERROR\n");
-	}
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_buffer);
-
-
-
-	stbi_image_free(texture_buffer);
+	
+	texture myTexture("../resources/tropical.jpg");
+	myTexture.set_active();
 
 	shader myShader("../shaders/TextureShader.txt");
-	myShader.use();
+	myShader.set_active();
 
 
 

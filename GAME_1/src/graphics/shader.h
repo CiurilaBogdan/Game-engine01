@@ -19,7 +19,9 @@ namespace engine1 {
 		
 		shader(const char* vertex, const char* fragment);
 		shader(const char* shader_path);
-		void use();
+		unsigned int get_id() { return program_id; }
+		void set_active() const;
+		void set_inactive() const;
 
 	};
 }
