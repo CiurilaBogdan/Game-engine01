@@ -3,7 +3,7 @@
 #include <glfw3.h>
 #include <cstdio>
 
-#include "../vendor/stb_image.h"
+#include "stb_image.h"
 
 
 namespace engine1 {
