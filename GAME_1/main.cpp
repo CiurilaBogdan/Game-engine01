@@ -7,16 +7,43 @@
 #include "src/graphics/texture.h"
 
 #include "stb_image.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+//#include "glm/glm.hpp"
+//#include "glm/gtc/matrix_transform.hpp"
+//#include "glm/gtc/type_ptr.hpp"
 
+#include <chrono>
 
 using namespace std;
 using namespace engine1;
+//ALWAYS WRITE HERE WHAT YOU ARE CURRENTLY WORKING ON
+//Working on the vector class
+
+
+
+
 
 int main(void)
 {
+
+	
+
+
+	float result = 0.0f;
+
+	using namespace std::chrono;
+	high_resolution_clock::time_point t1 = high_resolution_clock::now();
+	for (int i = 0; i < 1000000; i++) {
+		
+	}
+
+	high_resolution_clock::time_point t2 = high_resolution_clock::now();
+	
+	auto time_span = duration_cast<microseconds>(t2 - t1);
+
+	printf("%d\n", time_span.count());
+	//printf("%f\n", result);
+
+	return 0;
 	float zoom_level = 1.0f;
 	float vertices[] = {
 	     1.0f,  1.0f, 0.0f,   1.0f*zoom_level, 1.0f*zoom_level, // top right
@@ -108,7 +135,7 @@ int main(void)
 	texture myTexture("../resources/tropical.jpg");
 	myTexture.set_active();
 
-	shader myShader("../shaders/Transformation.txt");
+	shader myShader("../shaders/TextureShader.txt");
 	myShader.set_active();
 
 	//glm::mat4 trMat(1.0f);
@@ -132,6 +159,8 @@ int main(void)
 	//
 	//glm::mat4 view;
 
+	
+	
 	float oldTime = 0.0f, currentTime = 0.0f, deltaTime = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
@@ -164,9 +193,9 @@ int main(void)
 
 		glUniformMatrix4fv(transformationLocation, 1, GL_FALSE, glm::value_ptr(trMat));*/
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 
 
