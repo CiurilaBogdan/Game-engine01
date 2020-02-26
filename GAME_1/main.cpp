@@ -5,6 +5,7 @@
 
 #include "src/graphics/shader.h"
 #include "src/graphics/texture.h"
+#include "src/math/vector3.h"
 
 #include "stb_image.h"
 //#include "glm/glm.hpp"
@@ -12,6 +13,7 @@
 //#include "glm/gtc/type_ptr.hpp"
 
 #include <chrono>
+#include <cmath>
 
 using namespace std;
 using namespace engine1;
@@ -19,22 +21,25 @@ using namespace engine1;
 //Working on the vector class
 
 
-
-
-
 int main(void)
 {
-
-	
-
+	vector3 vec1(2, 1, 0);
+	vector3 vec2(1, 2, 0);
+	vector3 vec3;
 
 	float result = 0.0f;
+	
+
+	int x = 0;
 
 	using namespace std::chrono;
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
+	
 	for (int i = 0; i < 1000000; i++) {
-		
+
+
 	}
+	
 
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 	
