@@ -23,32 +23,32 @@ using namespace engine1;
 
 int main(void)
 {
-	vector3 vec1(2, 1, 0);
-	vector3 vec2(1, 2, 0);
-	vector3 vec3;
+	//vector3 vec1(2, 1, 0);
+	//vector3 vec2(1, 2, 0);
+	//vector3 vec3;
 
-	float result = 0.0f;
-	
+	//float result = 0.0f;
+	//
 
-	int x = 0;
+	//int x = 0;
 
-	using namespace std::chrono;
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-	
-	for (int i = 0; i < 1000000; i++) {
+	//using namespace std::chrono;
+	//high_resolution_clock::time_point t1 = high_resolution_clock::now();
+	//
+	//for (int i = 0; i < 1000000; i++) {
 
 
-	}
-	
+	//}
+	//
 
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
-	
-	auto time_span = duration_cast<microseconds>(t2 - t1);
+	//high_resolution_clock::time_point t2 = high_resolution_clock::now();
+	//
+	//auto time_span = duration_cast<microseconds>(t2 - t1);
 
-	printf("%d\n", time_span.count());
-	//printf("%f\n", result);
+	//printf("%d\n", time_span.count());
+	////printf("%f\n", result);
 
-	return 0;
+	//return 0;
 	float zoom_level = 1.0f;
 	float vertices[] = {
 	     1.0f,  1.0f, 0.0f,   1.0f*zoom_level, 1.0f*zoom_level, // top right
@@ -61,6 +61,7 @@ int main(void)
 		1, 2, 3    // second triangle
 	};
 
+	
 	//float cube[] = {
 	//-1.0, -1.0,  1.0,	   1.0f , 1.0f,
 	// 1.0, -1.0,  1.0,	   1.0f , 0.0f,
@@ -95,7 +96,7 @@ int main(void)
 	};*/
 
 
-
+		
 	GLFWwindow* window;
 
 	if (!glfwInit())
@@ -121,13 +122,15 @@ int main(void)
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
 	unsigned int EBO;
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_ind), cube_ind, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
@@ -163,12 +166,16 @@ int main(void)
 	//glm::vec3 cameraUp = glm::cross(cameraDir, cameraRight);
 	//
 	//glm::mat4 view;
-
 	
+	for (int i = 0; i < 4 * 5; i += 5) {
+		vertices[i] *= 0.5;
+		vertices[i + 1] *= 0.5;
+	}
 	
 	float oldTime = 0.0f, currentTime = 0.0f, deltaTime = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
+
 		glfwPollEvents();
 		
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -179,6 +186,21 @@ int main(void)
 		deltaTime = currentTime - oldTime;
 		oldTime = currentTime;
 
+		/*2d rotation*/
+
+		float degree = deltaTime*100;
+		float toRadian = 3.14 / 180;
+		float c = cos(degree * toRadian);
+		float s = sin(degree * toRadian);
+
+		for (int i = 0; i < 4 * 5; i += 5) {
+			vertices[i] = vertices[i] * c - vertices[i + 1] * s;
+			vertices[i + 1] = vertices[i] * s + vertices[i + 1] * c;
+		}
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+		
 		/*if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 			trMat = glm::rotate(trMat, glm::radians(45.0f * deltaTime), glm::vec3(-1.0f, 0.0f, 0.0f));
 
