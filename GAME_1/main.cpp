@@ -23,6 +23,7 @@ using namespace engine1;
 
 int main(void)
 {
+	return 0;
 	//vector3 vec1(2, 1, 0);
 	//vector3 vec2(1, 2, 0);
 	//vector3 vec3;
