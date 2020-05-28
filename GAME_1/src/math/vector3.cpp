@@ -60,5 +60,10 @@ engine1::vector3* engine1::vector3::get_norm(vector3& vec)
 	return  new vector3(vec.x/length, vec.y / length, vec.z / length);
 }
 
+void engine1::vector3::print() const
+{
+	printf("%.2f %.2f %.2f\n", x, y, z);
+}
+
 
 

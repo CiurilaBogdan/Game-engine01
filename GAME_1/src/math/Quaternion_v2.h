@@ -21,6 +21,9 @@ namespace engine1 {
 
 		quaternion get_conjugate();
 		quaternion multiply(quaternion& q);
+		float mag()const;
+		quaternion normalized()const;
+		void set_identity();
 
 		void print();
 	};

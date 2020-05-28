@@ -37,6 +37,34 @@ engine1::quaternion engine1::quaternion::multiply(quaternion& q)
 	return quaternion(xR,yR,zR,wR);
 }
 
+float engine1::quaternion::mag() const
+{
+
+	return sqrt(x*x+y*y+z*z+w*w);
+}
+
+engine1::quaternion engine1::quaternion::normalized() const
+{
+	quaternion res;
+	float mag = this->mag();
+	res.x = x / mag;
+	res.y = y / mag;
+	res.z = z / mag;
+	res.w = w / mag;
+
+
+
+	return res;
+}
+
+void engine1::quaternion::set_identity()
+{
+	x = 0.0f;
+	y = 0.0f;
+	z = 0.0f;
+	w = 1.0f;
+}
+
 
 
 

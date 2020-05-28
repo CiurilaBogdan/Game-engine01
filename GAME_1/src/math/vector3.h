@@ -1,6 +1,6 @@
 #pragma once
 #include <cmath>
-
+#include <cstdio>
 namespace engine1 {
 
 	class vector3 {
@@ -12,7 +12,7 @@ namespace engine1 {
 		vector3(float a, float b, float c);
 		vector3(vector3& other);
 
-		//USE THESE FOR PROTOTYPING ONLY, ARE VERY SLOW
+		
 		static float dot(vector3& first, vector3& second);
 		static float mag(vector3& vec);
 		static float distance(vector3& first, vector3& second);
@@ -20,6 +20,8 @@ namespace engine1 {
 		static void cross(vector3& first,vector3& second,vector3 & result);
 		static void norm(vector3& vec, vector3& result);
 		static vector3* get_norm(vector3& vec);
+
+		void print()const;
 	};
 
 
