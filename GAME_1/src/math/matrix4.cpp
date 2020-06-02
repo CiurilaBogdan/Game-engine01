@@ -5,27 +5,27 @@ engine1::mat4::mat4()
 	set_identity();
 }
 
-engine1::mat4 engine1::mat4::multiply(const mat4& other) const
-{
-	mat4 result;
-	for (int i = 0; i < 4; i++) {
-
-		for (int j = 0; j < 4; j++) {
-			float tmpRes = 0;
-
-			for (int k = 0; k < 4; k++) {
-				tmpRes += data[k + (i * 4)] * other.data[k * 4 + j];
-			}
-
-			result.data[i * 4 + j] = tmpRes;
-		}
-
-
-	}
-
-
-	return result;
-}
+//engine1::mat4 engine1::mat4::multiply(const mat4& other) 
+//{
+//	mat4 result;
+//	for (int i = 0; i < 4; i++) {
+//
+//		for (int j = 0; j < 4; j++) {
+//			float tmpRes = 0;
+//
+//			for (int k = 0; k < 4; k++) {
+//				tmpRes += data[k + (i * 4)] * other.data[k * 4 + j];
+//			}
+//
+//			result.data[i * 4 + j] = tmpRes;
+//		}
+//
+//
+//	}
+//
+//
+//	return result;
+//}
 
 engine1::mat4 engine1::mat4::operator*(const mat4& other) const
 {
@@ -50,7 +50,7 @@ engine1::mat4 engine1::mat4::operator*(const mat4& other) const
 	return result;
 }
 
-engine1::mat4 engine1::mat4::rotate(const quaternion& quat) const
+engine1::mat4 engine1::mat4::rotate(const quaternion& quat) 
 {
 	mat4 result;
 
@@ -91,7 +91,7 @@ engine1::mat4 engine1::mat4::rotate(const quaternion& quat) const
 	return result;
 }
 
-engine1::mat4 engine1::mat4::rotate2(const quaternion& quat) const
+engine1::mat4 engine1::mat4::rotate2(const quaternion& quat) 
 {
 	float x, y, z, w;
 	x = quat.x;
@@ -121,7 +121,7 @@ engine1::mat4 engine1::mat4::rotate2(const quaternion& quat) const
 
 }
 
-engine1::mat4 engine1::mat4::scale(const vector3& vec) const
+engine1::mat4 engine1::mat4::scale(const vector3& vec) 
 {
 	mat4 res;
 	res.data[0] = vec.x;
@@ -131,7 +131,7 @@ engine1::mat4 engine1::mat4::scale(const vector3& vec) const
 	return res;
 }
 
-engine1::mat4 engine1::mat4::translate(const vector3& vec) const
+engine1::mat4 engine1::mat4::translate(const vector3& vec) 
 {
 	mat4 res;
 	res.data[3] = vec.x;
@@ -141,7 +141,7 @@ engine1::mat4 engine1::mat4::translate(const vector3& vec) const
 	return res;
 }
 
-engine1::mat4 engine1::mat4::perspective(float fov, float aspectRatio, float near, float far) const
+engine1::mat4 engine1::mat4::perspective(float fov, float aspectRatio, float near, float far)
 {
 	mat4 res;
 	float toRadian = 3.14 / 180;
@@ -160,6 +160,45 @@ engine1::mat4 engine1::mat4::perspective(float fov, float aspectRatio, float nea
 
 	return res;
 }
+
+engine1::mat4 engine1::mat4::lookat(const vector3& eye, const vector3& target, const vector3& up)
+{
+
+	vector3 zaxis = eye - target;
+	zaxis.normalize();
+
+	vector3 xaxis = vector3::cross(up, zaxis);
+	xaxis.normalize();
+
+	vector3 yaxis = vector3::cross(zaxis, xaxis);
+
+
+	mat4 res;
+
+	/*float matData[] =
+	{
+		xaxis.x, yaxis.x, zaxis.x, 0,
+		xaxis.y, yaxis.y, zaxis.y, 0,
+		xaxis.z, yaxis.z, zaxis.z, 0,
+		vector3::dot(xaxis, eye)*-1, vector3::dot(yaxis, eye)*1, vector3::dot(zaxis, eye)*1, 1
+	};*/
+	
+	
+	float matData[] =
+	{
+		xaxis.x, xaxis.y, xaxis.z, vector3::dot(xaxis, eye) * -1,
+		yaxis.x, yaxis.y, yaxis.z, vector3::dot(yaxis, eye) * -1,
+		zaxis.x, zaxis.y, zaxis.z, vector3::dot(zaxis, eye) * -1,
+		0,0 ,0 , 1
+	
+	};
+
+
+	res.set_data(matData);
+	return res;
+}
+
+
 
 void engine1::mat4::multiply(const mat4& other1, const mat4& other2)
 {
@@ -190,6 +229,13 @@ void engine1::mat4::set_transform(const vector3& trans, const vector3& scale, co
 
 }
 
+void engine1::mat4::set_translation(const vector3& vec)
+{
+	data[3] = vec.x;
+	data[7] = vec.y;
+	data[11] = vec.z;
+}
+
 void engine1::mat4::set_identity()
 {
 	for (int i = 0; i < 16; i++) {
@@ -204,6 +250,14 @@ void engine1::mat4::set_identity()
 
 }
 
+void engine1::mat4::set_data(const float* otherData)
+{
+	for (int i = 0; i < 16; i++) {
+		data[i] = otherData[i];
+
+	}
+}
+
 
 void engine1::mat4::print() const
 {
@@ -213,8 +267,12 @@ void engine1::mat4::print() const
 
 		}
 		printf("\n");
+		
 
 	}
+
+	printf("\n");
+
 }
 
 

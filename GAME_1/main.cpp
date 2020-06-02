@@ -13,6 +13,8 @@
 #include "src/math/Quaternion_v2.h"
 #include "src/math/vector4.h"
 #include "stb_image.h"
+#include "src/gameOjbects/camera.h"
+#include "src/gameOjbects/transform.h"
 //#include "glm/glm.hpp"
 //#include "glm/gtc/matrix_transform.hpp"
 //#include "glm/gtc/type_ptr.hpp"
@@ -38,19 +40,40 @@ void mat4_vec4(float *mat4,float *vec4,float *result) {
 	}
 	
 }
+const unsigned int screenWidth = 1024;
+const unsigned int screenHeight = 1024;
+
+double cameraX = screenWidth / 2;
+double cameraY = screenHeight / 2;
+bool firstMouse = true;
+
+camera cam;
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+	if (firstMouse) {
+		cameraX = xpos;
+		cameraY = ypos;
+		firstMouse = false;
+	}
+	float xoffset = xpos - cameraX;
+	float yoffset = cameraY - ypos; // reversed since y-coordinates go from bottom to top
+
+	
 
 
+	cameraX = xpos;
+	cameraY = ypos;
 
+	cam.update(xoffset,yoffset);
+	
+}
 
 int main(void)
 {
-	//mat4 m1 ;
-	//mat4 m2 ;
-	//mat4 m3 ;
-	//
-	//vector3 pos(1, 2, 3);
-	//vector3 scl(2, 3, 4);
-	//vector3 rot(3, 4, 5);
+	//transform scene[100];
+	//for (int i = 0; i < 100; i++) {
+	//	scene[i].translate(i, i, i);
+	//}
 	//
 	//int ix = 0;
 	//int bfn = 1000000;
@@ -59,9 +82,6 @@ int main(void)
 	//
 	//for (int i = 0; i < bfn; i++) {
 	//	
-	//	
-
-
 	//}
 	//
 
@@ -69,17 +89,8 @@ int main(void)
 	//
 	//auto time_span = duration_cast<microseconds>(t2 - t1);
 	//printf("MICROSECONDS: %d\n", time_span.count());
-	////printf("%f\n", res);
 	//
-	/*mat4 m;
-	vector4 v(1,2,3,4);
-	for (int i = 0; i < 16; i++) {
-		m.data[i] = i;
-	}
-	vector4 res = v * m;
-	printf("%.2f %.2f %.2f %.2f", res.x, res.y, res.z, res.w);
-
-	return 0;*/
+	//return 0;
 
 	
 
@@ -216,7 +227,7 @@ int main(void)
 	if (!glfwInit())
 		return -1;
 
-	window = glfwCreateWindow(1024, 1024, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(screenWidth, screenHeight, "Hello World", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -229,6 +240,9 @@ int main(void)
 
 		return 0;
 	}
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -278,25 +292,33 @@ int main(void)
 	shader myShader("../shaders/MathPractice2.txt");
 	myShader.set_active();
 
+	int mvpId = glGetUniformLocation(myShader.get_id(), "mvp");
+
 
 	
-	float toRadian = 3.14 / 180;
+	double toRadian = 3.14159265359 / 180;
 
 	
 	 float degree = 0.0f;
 
 	float oldTime = 0.0f, currentTime = 0.0f, deltaTime = 0.0f;
-	bool rotate = true;
-	vector3 axis(1.0f, 1.0f, 0.0f);
+	bool rotate = false;
+
+	vector3 axis(0.0f, 0.0f, 0.0f);
 	vector3 cubePos(0.0f, 0.0f, 0.0f);
 	vector3 cubeSize(1.0f, 1.0f, 1.0f);
+	
 	quaternion cubeOrientation(0, 0, 0, 1);
 	mat4 perspMat;
-	perspMat = perspMat.perspective(45, 1024 / 1024, 0.001, 100);
+	mat4 mvpMat;
+
+	perspMat = mat4::perspective(45, 1024 / 1024, 0.00000001, 100);
 
 	glEnable(GL_DEPTH_TEST);
 	
-
+	
+	mat4 camMat;
+	
 	while (!glfwWindowShouldClose(window))
 	{
 
@@ -312,72 +334,68 @@ int main(void)
 		oldTime = currentTime;
 		//rotate = false;
 		
+		//Get camera input
 
 		
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 			/*axis.y = -1.0;
 			rotate = true;*/
-			if (cubePos.x > -0.5f) {
+			/*if (cubePos.x > -0.5f) {
 				cubePos.x -= deltaTime * 0.5;
 
-			}
+			}*/
+			cam.position.x -= deltaTime * 0.5;
+			
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 			/*axis.y = 1.0;
 			rotate = true;*/
-			if (cubePos.x < 0.5f) {
+			/*if (cubePos.x < 0.5f) {
 				cubePos.x += deltaTime * 0.5;
 
-			}
+			}*/
+			cam.position.x += deltaTime * 0.5;
 
 		}
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 			/*axis.x = -1.0;
 			rotate = true;*/
-			if (cubePos.y < 0.5f) {
+			/*if (cubePos.y < 0.5f) {
 				cubePos.y += deltaTime * 0.5;
 
-			}
+			}*/
+			cam.position.z -= deltaTime * 0.5;
+
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 			/*axis.x = 1.0;
 			rotate = true;*/
-			if (cubePos.y > -0.5f) {
+			/*if (cubePos.y > -0.5f) {
 				cubePos.y -= deltaTime * 0.5;
 
-			}
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
-			/*axis.x = 1.0;
-			rotate = true;*/
-				cubePos.z -= deltaTime * 0.5;
+			}*/
+			cam.position.z += deltaTime * 0.5;
 
 		}
-		if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
-			/*axis.x = 1.0;
-			rotate = true;*/
-			cubePos.z += deltaTime * 0.5;
 
-		}
+	
 
 
 		
+		
+
 		if (rotate) {
+			degree += deltaTime * 50;
 
-		degree += deltaTime *50;
-		float c = cos(degree * toRadian*0.5);
-		float s = sin(degree * toRadian*0.5);
-
-		float halfSine = sin(degree* toRadian * 0.5);
+		
+		}
+		float halfSine = sin(degree * toRadian * 0.5);
 		float halfCosine = cos(degree * toRadian * 0.5);
 
-		
 		float axisLength = vector3::mag(axis);
 		axis.x /= axisLength;
 		axis.y /= axisLength;
 		axis.z /= axisLength;
-
 		quaternion rotation(axis);
 		
 
@@ -385,83 +403,32 @@ int main(void)
 		rotation.y *= halfSine;
 		rotation.z *= halfSine;
 		rotation.w = halfCosine;
-		
-		quaternion rotationConjugate = rotation.get_conjugate();
-	
+		quaternion newR = rotation * cubeOrientation;
 
-		quaternion newR = rotation.multiply(cubeOrientation);
 		
 		mat4 sM;
-		sM = sM.scale(cubeSize);
+		sM = mat4::scale(cubeSize);
 
 		mat4 rM;
 		newR = newR.normalized();
-		rM = rM.rotate2(newR);
+		rM = mat4::rotate2(newR);
 		
+
 		mat4 tM;
-		tM = tM.translate(cubePos);
-
-			for (int i = 0; i < 8 * 4; i += 4) {
-
-				quaternion pure((nextCube2[i] * cubeSize.x), (nextCube2[i + 1] * cubeSize.y) , (nextCube2[i + 2] * cubeSize.z));
+		tM = mat4::translate(cubePos);
 
 
-				quaternion rotRes = pure.multiply(rotation);
-
-				rotRes = rotationConjugate.multiply(rotRes);
-
-				rotRes.x += cubePos.x;
-				rotRes.y += cubePos.y;
-				rotRes.z += cubePos.z;
-
-
-
-				
-				/*nextCube[i + 0] = rotRes.x + cubePos.x;
-				nextCube[i + 1] = rotRes.y + cubePos.y;
-				nextCube[i + 2] = rotRes.z + cubePos.z;*/
-
-			
-
-					/*nextCube[i + 0] = rotRes.x ;
-					nextCube[i + 1] = rotRes.y ;
-					nextCube[i + 2] = rotRes.z ;*/
-				
-				vector4 vRes(nextCube2[i], nextCube2[i + 1], nextCube2[i + 2], nextCube2[i + 3]);
-
-				vRes = vRes * sM*rM*tM*perspMat;
-				
-
-				nextCube[i] = vRes.x;
-				nextCube[i+1] = vRes.y;
-				nextCube[i+2] = vRes.z;
-				nextCube[i + 3] = vRes.w;
-			}
-		}
-		//cubePos.x += deltaTime * 0.1;
-		//projection
-		//for (int i = 0; i < 8 * 4; i += 4) {
-		//	
-
-		//	//nextCube[i + 3] = nextCube[i + 2] * -1;//division by z
-
-		//}
 		
-		/*float oc = 1 - c;
-		float rx = 1.0f, ry = 0.0f, rz = 0.0f;
-		float rxry = rx * ry, rxrz = rx * rz, ryrz = ry * rz;
+		camMat = mat4::lookat(cam.position, cam.position + cam.front, cam.up);
+		
 	
-
-		for (int i = 0; i < 8 * 5; i += 5) {
-			cube[i]     = cube2[i] * (c + rx * rx * oc)   + cube2[i + 1] * (rxry * oc - rz * s) + cube2[i + 2] * (rxrz * oc + ry * s);
-			cube[i + 1] = cube2[i] * (rxry * oc + rz * s) + cube2[i + 1] * (c * ry * ry * oc)   + cube2[i + 2] * (ryrz * oc - rx * s);
-			cube[i + 2] = cube2[i] * (rxrz * oc - ry * s) + cube2[i + 1] * (ryrz * oc + rx * s) + cube2[i + 2] * (c + rz * rz * oc);
-
-		}*/
+		//mvpMat = perspMat * camMat* tM * rM * sM;
+		mvpMat = perspMat * tM * rM * sM;
+		
 		
 
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_DYNAMIC_DRAW);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_DYNAMIC_DRAW);
+		glUniformMatrix4fv(mvpId, 1, GL_FALSE, mvpMat.data);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

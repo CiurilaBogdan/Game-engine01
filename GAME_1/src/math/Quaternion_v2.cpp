@@ -16,8 +16,17 @@ engine1::quaternion::quaternion(float a, float b, float c, float d) : x(a), y(b)
 {
 }
 
-engine1::quaternion::quaternion(vector3& vec):x(vec.x), y(vec.y), z(vec.z), w(0.0f)
+engine1::quaternion::quaternion(const vector3& vec)
 {
+	
+	
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
+	
+
+		w = 0;
+
 }
 
 engine1::quaternion engine1::quaternion::get_conjugate()
@@ -35,6 +44,18 @@ engine1::quaternion engine1::quaternion::multiply(quaternion& q)
 
 
 	return quaternion(xR,yR,zR,wR);
+}
+
+engine1::quaternion engine1::quaternion::operator*(const quaternion& q) const
+{
+	float wR = (this->w * q.w) - (this->x * q.x) - (this->y * q.y) - (this->z * q.z);
+	float xR = (this->w * q.x) + (this->x * q.w) + (this->y * q.z) - (this->z * q.y);
+	float yR = (this->w * q.y) + (this->y * q.w) + (this->z * q.x) - (this->x * q.z);
+	float zR = (this->w * q.z) + (this->z * q.w) + (this->x * q.y) - (this->y * q.x);
+
+	quaternion res(xR, yR, zR, wR);
+
+	return res;
 }
 
 float engine1::quaternion::mag() const
