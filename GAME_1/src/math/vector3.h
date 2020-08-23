@@ -14,6 +14,8 @@ namespace engine1 {
 
 		vector3 get_normalize()const;
 		void normalize();
+		void set_scalar(float scalar);
+		bool is_zero();
 
 		vector3 operator-(const vector3& other)const;
 		vector3 operator+(const vector3& other)const;

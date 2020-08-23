@@ -25,6 +25,8 @@ namespace engine1 {
 		float mag()const;
 		quaternion normalized()const;
 		void set_identity();
+		void set_vector(const vector3& vec);
+		void set_quat(const quaternion& qt);
 
 		void print();
 	};

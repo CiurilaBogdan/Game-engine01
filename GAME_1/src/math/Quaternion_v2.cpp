@@ -86,6 +86,22 @@ void engine1::quaternion::set_identity()
 	w = 1.0f;
 }
 
+void engine1::quaternion::set_vector(const vector3& vec)
+{
+	x = vec.x;
+	y = vec.y;
+	z = vec.z;
+	w = 1.0f;
+}
+
+void engine1::quaternion::set_quat(const quaternion& qt)
+{
+	x = qt.x;
+	y = qt.y;
+	z = qt.z;
+	w = qt.w;
+}
+
 
 
 

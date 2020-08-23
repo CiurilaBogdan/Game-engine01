@@ -27,6 +27,8 @@ using namespace engine1;
 //next: profiling and timing performance
 
 
+
+
 void mat4_vec4(float *mat4,float *vec4,float *result) {
 
 	int matIndex = 0;
@@ -66,6 +68,29 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
 	cam.update(xoffset,yoffset);
 	
+}
+void proto_rotate(quaternion& qtR, vector3& axis, float angle) {
+
+	//quaternion qt(0,0,0,1);
+	//rotate qt around axi by angle
+	quaternion qt;
+	double toRadian = 3.14159265359 / 180;
+	float halfSine = sin(angle * toRadian * 0.5);
+	float halfCosine = cos(angle* toRadian * 0.5);
+
+	float axisLength = vector3::mag(axis);
+	axis.x /= axisLength;
+	axis.y /= axisLength;
+	axis.z /= axisLength;
+
+	qt.set_vector(axis);
+
+	qt.x *= halfSine;
+	qt.y *= halfSine;
+	qt.z *= halfSine;
+	qt.w = halfCosine;
+	
+	qtR.set_quat(qtR*qt);
 }
 
 int main(void)
@@ -300,17 +325,26 @@ int main(void)
 
 	
 	 float degree = 0.0f;
+	 float degrees[3] = { 0.0f,0.0f,0.0f };
 
 	float oldTime = 0.0f, currentTime = 0.0f, deltaTime = 0.0f;
-	bool rotate = false;
+	bool rotate = true;
 
-	vector3 axis(0.0f, 0.0f, 0.0f);
+	vector3 axis(0.0f, 1.0f, 0.0f);
 	vector3 cubePos(0.0f, 0.0f, 0.0f);
 	vector3 cubeSize(1.0f, 1.0f, 1.0f);
 	
-	quaternion cubeOrientation(0, 0, 0, 1);
+	quaternion cubeOrientation(0, 0, 0, 1);//useless
+	quaternion newR;
+	quaternion oldRotation;
 	mat4 perspMat;
 	mat4 mvpMat;
+
+	quaternion rotation(0,0,0,1);
+	vector3 XAxis(1, 0, 0);
+	vector3 YAxis(0, 1, 0);
+
+
 
 	perspMat = mat4::perspective(45, 1024 / 1024, 0.00000001, 100);
 
@@ -336,7 +370,10 @@ int main(void)
 		
 		//Get camera input
 
+		/*axis.set_scalar(0.0f);*/
+		rotate = false;
 		
+
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 			/*axis.y = -1.0;
 			rotate = true;*/
@@ -344,7 +381,15 @@ int main(void)
 				cubePos.x -= deltaTime * 0.5;
 
 			}*/
+			
 			cam.position.x -= deltaTime * 0.5;
+			//degree += deltaTime * 50 ;
+			//axis.set_scalar(0.0f);
+			/*degrees[1] += deltaTime * 50;
+			axis.y = 1;
+			rotate = true;*/
+			degrees[1] += deltaTime ;
+			proto_rotate(rotation, YAxis, degrees[1]);
 			
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
@@ -355,6 +400,16 @@ int main(void)
 
 			}*/
 			cam.position.x += deltaTime * 0.5;
+			
+
+			//degrees[1] += deltaTime * 50 * -1;
+			////axis.set_scalar(0.0f);
+			//axis.y = 1;
+			//rotate = true;
+			degrees[1] += deltaTime;
+			degrees[1] *= -1;
+			proto_rotate(rotation, YAxis, degrees[1]);
+
 
 		}
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
@@ -365,6 +420,13 @@ int main(void)
 
 			}*/
 			cam.position.z -= deltaTime * 0.5;
+			//degrees[0] += deltaTime * 50;
+			////axis.set_scalar(0.0f);
+			//axis.x = 1;
+			//rotate = true;
+
+			degrees[0] += deltaTime * 50 ;
+			proto_rotate(rotation, XAxis, degrees[0]);
 
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
@@ -376,35 +438,56 @@ int main(void)
 			}*/
 			cam.position.z += deltaTime * 0.5;
 
+
+			//degrees[0] += deltaTime * 50*-1;
+			////axis.set_scalar(0.0f);
+			//axis.x = 1;
+			//rotate = true;
+			degrees[0] += deltaTime * 50*-1;
+			proto_rotate(rotation, XAxis, degrees[0]);
+
 		}
 
 	
-
-
-		
-		
-
-		if (rotate) {
+		/*if (rotate) {
 			degree += deltaTime * 50;
+		}*/
 
-		
-		}
+
+
 		float halfSine = sin(degree * toRadian * 0.5);
 		float halfCosine = cos(degree * toRadian * 0.5);
-
-		float axisLength = vector3::mag(axis);
-		axis.x /= axisLength;
-		axis.y /= axisLength;
-		axis.z /= axisLength;
-		quaternion rotation(axis);
+		
 		
 
-		rotation.x *= halfSine;
+		
+		
+		//if (axis.is_zero()) {
+
+		/*if (rotate == false){
+
+			rotation.set_quat(oldRotation);
+			
+		}
+		else {
+
+			float axisLength = vector3::mag(axis);
+			axis.x /= axisLength;
+			axis.y /= axisLength;
+			axis.z /= axisLength;
+			
+			rotation.set_vector(axis);
+			oldRotation.set_quat(rotation);
+
+		}
+		*/
+
+		/*rotation.x *= halfSine;
 		rotation.y *= halfSine;
 		rotation.z *= halfSine;
-		rotation.w = halfCosine;
-		quaternion newR = rotation * cubeOrientation;
-
+		rotation.w = halfCosine;*/
+		//newR = rotation * cubeOrientation;
+		newR = rotation;
 		
 		mat4 sM;
 		sM = mat4::scale(cubeSize);

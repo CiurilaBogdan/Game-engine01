@@ -31,6 +31,18 @@ void engine1::vector3::normalize()
 	z = z / length;
 }
 
+void engine1::vector3::set_scalar(float scalar)
+{
+	x = y = z = scalar;
+}
+
+bool engine1::vector3::is_zero()
+{
+	if (x == y == z == 0.0f)return true;
+
+	return false;
+}
+
 engine1::vector3 engine1::vector3::operator-(const vector3& other) const
 {
 	return vector3(x-other.x,y-other.y,z-other.z);
