@@ -4,6 +4,9 @@
 #include <chrono>
 #include <cmath>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "src/graphics/shader.h"
 #include "src/graphics/texture.h"
@@ -69,32 +72,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	cam.update(xoffset,yoffset);
 	
 }
-void proto_rotate(quaternion& qtR, vector3& axis, float angle) {
 
-	//quaternion qt(0,0,0,1);
-	//rotate qt around axi by angle
-	quaternion qt;
-	double toRadian = 3.14159265359 / 180;
-	float halfSine = sin(angle * toRadian * 0.5);
-	float halfCosine = cos(angle* toRadian * 0.5);
 
-	float axisLength = vector3::mag(axis);
-	axis.x /= axisLength;
-	axis.y /= axisLength;
-	axis.z /= axisLength;
-
-	qt.set_vector(axis);
-
-	qt.x *= halfSine;
-	qt.y *= halfSine;
-	qt.z *= halfSine;
-	qt.w = halfCosine;
-	
-	qtR.set_quat(qtR*qt);
-}
 
 int main(void)
 {
+
+	
+
 	//transform scene[100];
 	//for (int i = 0; i < 100; i++) {
 	//	scene[i].translate(i, i, i);
@@ -119,34 +104,48 @@ int main(void)
 
 	
 
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile("C:/dev/GAME_1/resources/cube.obj", aiProcessPreset_TargetRealtime_MaxQuality);
+	if (!scene) {
+		printf(importer.GetErrorString());
+	}
 	
-	//float cube[] = {
-	//-1.0, -1.0,  1.0,	   1.0f , 1.0f,
-	// 1.0, -1.0,  1.0,	   1.0f , 0.0f,
-	// 1.0,  1.0,  1.0,	   0.0f,  0.0f,
-	//-1.0,  1.0,  1.0,	   0.0f,  1.0f,
-	//// back
-	//-1.0, -1.0, -1.0,	   1.0f ,1.0f,
-	// 1.0, -1.0, -1.0,	   1.0f ,0.0f,
-	// 1.0,  1.0, -1.0,	   0.0f, 0.0f,
-	//-1.0,  1.0, -1.0,	   0.0f, 1.0f,
-	//
-	//};
+	
 
-	//float cube2[] = {
-	//-1.0, -1.0,  1.0,	   1.0f , 1.0f,
-	// 1.0, -1.0,  1.0,	   1.0f , 0.0f,
-	// 1.0,  1.0,  1.0,	   0.0f, 0.0f,
-	//-1.0,  1.0,  1.0,	   0.0f, 1.0f,
-	//// back
-	//-1.0, -1.0, -1.0,	   1.0f ,1.0f,
-	// 1.0, -1.0, -1.0,	   1.0f ,0.0f,
-	// 1.0,  1.0, -1.0,	   0.0f, 0.0f,
-	//-1.0,  1.0, -1.0,	   0.0f, 1.0f,
+	 unsigned int noVerts = scene->mMeshes[0]->mNumVertices;
 
-	//};
+	
+	 float *cubeObj = new float[noVerts*3];
+	 float* cubeUV = new float[noVerts * 2];
+
+	 for (int i = 0; i < noVerts; i++) {
+		 cubeObj[(i * 3)] = scene->mMeshes[0]->mVertices[i].x;
+		 cubeObj[(i * 3) +1] = scene->mMeshes[0]->mVertices[i].y;
+		 cubeObj[(i * 3) +2] = scene->mMeshes[0]->mVertices[i].z;
+
+		 cubeUV[(i * 2)] = scene->mMeshes[0]->mTextureCoords[0][i].x;
+		 cubeUV[(i * 2)+1] = scene->mMeshes[0]->mTextureCoords[0][i].y;
 
 
+	 }
+	 
+
+
+	 int noFaces = scene->mMeshes[0]->mNumFaces;
+	 int noInds = noFaces * 3;
+	 unsigned int* cubeInds = new unsigned int[noInds];
+	 int ti = 0;
+	 for (int i = 0; i < noFaces; i++) {
+
+		 ti = i*3;
+		 cubeInds[ti+0] = scene->mMeshes[0]->mFaces[i].mIndices[0];
+		 cubeInds[ti+1] = scene->mMeshes[0]->mFaces[i].mIndices[1];
+		 cubeInds[ti+2] = scene->mMeshes[0]->mFaces[i].mIndices[2];
+
+	 }
+
+	
+	 //delete[] cubeInds;
 	unsigned int cube_ind[] = {
 			    0, 2, 1,
 				0, 3, 2,
@@ -266,7 +265,7 @@ int main(void)
 		return 0;
 	}
 	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
@@ -276,11 +275,14 @@ int main(void)
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_DYNAMIC_DRAW);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 	
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 3*noVerts*sizeof(float),cubeObj , GL_DYNAMIC_DRAW);
+
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0);
+	//glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
 
 
@@ -289,13 +291,16 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_ind), cube_ind, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_ind), cube_ind, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, noInds * sizeof(unsigned int), cubeInds, GL_DYNAMIC_DRAW);
+
 
 
 	unsigned int TBO;
 	glGenBuffers(1, &TBO);
 	glBindBuffer(GL_ARRAY_BUFFER, TBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(nextCubeUV), nextCubeUV, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCubeUV), nextCubeUV, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 2*noVerts*sizeof(float), cubeUV, GL_DYNAMIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
@@ -311,10 +316,15 @@ int main(void)
 	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
 
 	
-	texture myTexture("../resources/tropical.jpg");
+	
+	 delete[]cubeObj;
+
+	 delete[] cubeInds;
+	 delete[]cubeUV;
+	texture myTexture("../resources/uv_grid.jpg");
 	myTexture.set_active();
 
-	shader myShader("../shaders/MathPractice2.txt");
+	shader myShader("../shaders/MathPractice3.txt");
 	myShader.set_active();
 
 	int mvpId = glGetUniformLocation(myShader.get_id(), "mvp");
@@ -331,7 +341,7 @@ int main(void)
 	bool rotate = true;
 
 	vector3 axis(0.0f, 1.0f, 0.0f);
-	vector3 cubePos(0.0f, 0.0f, 0.0f);
+	vector3 cubePos(0.0f, 0.0f, -10.0f);
 	vector3 cubeSize(1.0f, 1.0f, 1.0f);
 	
 	quaternion cubeOrientation(0, 0, 0, 1);//useless
@@ -343,7 +353,7 @@ int main(void)
 	quaternion rotation(0,0,0,1);
 	vector3 XAxis(1, 0, 0);
 	vector3 YAxis(0, 1, 0);
-
+	vector3 rotationAngles;
 
 
 	perspMat = mat4::perspective(45, 1024 / 1024, 0.00000001, 100);
@@ -388,9 +398,11 @@ int main(void)
 			/*degrees[1] += deltaTime * 50;
 			axis.y = 1;
 			rotate = true;*/
-			degrees[1] += deltaTime ;
-			proto_rotate(rotation, YAxis, degrees[1]);
 			
+			rotationAngles.y += deltaTime * 0.5;
+			//proto_rotate(rotation, rotationAngles, degrees[1]);
+			rotation.from_euler(rotationAngles);
+
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 			/*axis.y = 1.0;
@@ -399,16 +411,17 @@ int main(void)
 				cubePos.x += deltaTime * 0.5;
 
 			}*/
-			cam.position.x += deltaTime * 0.5;
+			cam.position.y += deltaTime * 0.5;
 			
 
 			//degrees[1] += deltaTime * 50 * -1;
 			////axis.set_scalar(0.0f);
 			//axis.y = 1;
 			//rotate = true;
-			degrees[1] += deltaTime;
-			degrees[1] *= -1;
-			proto_rotate(rotation, YAxis, degrees[1]);
+			
+			rotationAngles.y -= deltaTime * 0.5;
+			//proto_rotate(rotation, rotationAngles, degrees[1]);
+			rotation.from_euler(rotationAngles);
 
 
 		}
@@ -425,8 +438,9 @@ int main(void)
 			//axis.x = 1;
 			//rotate = true;
 
-			degrees[0] += deltaTime * 50 ;
-			proto_rotate(rotation, XAxis, degrees[0]);
+			rotationAngles.x += deltaTime * 0.5;
+			//proto_rotate(rotation, rotationAngles, degrees[0]);
+			rotation.from_euler(rotationAngles);
 
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
@@ -443,9 +457,10 @@ int main(void)
 			////axis.set_scalar(0.0f);
 			//axis.x = 1;
 			//rotate = true;
-			degrees[0] += deltaTime * 50*-1;
-			proto_rotate(rotation, XAxis, degrees[0]);
-
+			rotationAngles.x -= deltaTime * 0.5;
+			
+			//proto_rotate(rotation, rotationAngles, degrees[0]);
+			rotation.from_euler(rotationAngles);
 		}
 
 	
@@ -515,12 +530,14 @@ int main(void)
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, noInds, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 
 
 	}
 
+
+	
 	glfwTerminate();
 	return 0;
 }

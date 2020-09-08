@@ -27,6 +27,7 @@ namespace engine1 {
 		void set_identity();
 		void set_vector(const vector3& vec);
 		void set_quat(const quaternion& qt);
+		void from_euler(const vector3& vec);
 
 		void print();
 	};

@@ -111,5 +111,12 @@ void engine1::vector3::print() const
 	printf("%.2f %.2f %.2f\n", x, y, z);
 }
 
+void engine1::vector3::print2() const
+{
+	float toDegrees =  180/ 3.14159265359 ;
+	printf("%.2f %.2f %.2f\n", x*toDegrees, y * toDegrees, z * toDegrees);
+
+}
+
 
 

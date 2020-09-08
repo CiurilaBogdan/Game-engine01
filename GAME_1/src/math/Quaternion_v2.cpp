@@ -102,6 +102,22 @@ void engine1::quaternion::set_quat(const quaternion& qt)
 	w = qt.w;
 }
 
+void engine1::quaternion::from_euler(const vector3& vec)
+{
+	//vec.print2();
+	float cy = cos(vec.z * 0.5);
+	float sy = sin(vec.z * 0.5);
+	float cp = cos(vec.y * 0.5);
+	float sp = sin(vec.y * 0.5);
+	float cr = cos(vec.x * 0.5);
+	float sr = sin(vec.x * 0.5);
+
+	w = cr * cp * cy + sr * sp * sy;
+	x = sr * cp * cy - cr * sp * sy;
+	y = cr * sp * cy + sr * cp * sy;
+	z = cr * cp * sy - sr * sp * cy;
+}
+
 
 
 

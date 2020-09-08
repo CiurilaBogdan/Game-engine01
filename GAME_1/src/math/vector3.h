@@ -33,6 +33,8 @@ namespace engine1 {
 		static vector3* get_norm(vector3& vec);
 
 		void print()const;
+		void print2()const;
+
 	};
 
 
