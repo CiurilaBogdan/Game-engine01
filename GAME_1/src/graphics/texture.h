@@ -20,5 +20,6 @@ namespace engine1 {
 		unsigned int get_id() { return texture_id; }
 		void set_active()const;
 		void set_inactive()const;
+		
 	};
 }

@@ -10,17 +10,17 @@
 
 #include "src/graphics/shader.h"
 #include "src/graphics/texture.h"
+#include "src/graphics/mesh.h"
+
 #include "src/math/vector3.h"
 #include "src/math/matrix4.h"
-//#include "src/math/quaternion.h"
 #include "src/math/Quaternion_v2.h"
 #include "src/math/vector4.h"
-#include "stb_image.h"
+
 #include "src/gameOjbects/camera.h"
 #include "src/gameOjbects/transform.h"
-//#include "glm/glm.hpp"
-//#include "glm/gtc/matrix_transform.hpp"
-//#include "glm/gtc/type_ptr.hpp"
+
+#include "stb_image.h"
 
 
 using namespace std;
@@ -101,19 +101,17 @@ int main(void)
 	//printf("MICROSECONDS: %d\n", time_span.count());
 	//
 	//return 0;
-
+	mesh cube("C:/dev/GAME_1/resources/monkey.obj");
 	
-
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile("C:/dev/GAME_1/resources/cube.obj", aiProcessPreset_TargetRealtime_MaxQuality);
 	if (!scene) {
 		printf(importer.GetErrorString());
 	}
-	
-	
 
+
+	
 	 unsigned int noVerts = scene->mMeshes[0]->mNumVertices;
-
 	
 	 float *cubeObj = new float[noVerts*3];
 	 float* cubeUV = new float[noVerts * 2];
@@ -130,7 +128,6 @@ int main(void)
 	 }
 	 
 
-
 	 int noFaces = scene->mMeshes[0]->mNumFaces;
 	 int noInds = noFaces * 3;
 	 unsigned int* cubeInds = new unsigned int[noInds];
@@ -146,59 +143,59 @@ int main(void)
 
 	
 	 //delete[] cubeInds;
-	unsigned int cube_ind[] = {
-			    0, 2, 1,
-				0, 3, 2,
+	//unsigned int cube_ind[] = {
+	//		    0, 2, 1,
+	//			0, 3, 2,
 
-				1,2,6,
-				6,5,1,
+	//			1,2,6,
+	//			6,5,1,
 
-				4,5,6,
-				6,7,4,
+	//			4,5,6,
+	//			6,7,4,
 
-				2,3,6,
-				6,3,7,
+	//			2,3,6,
+	//			6,3,7,
 
-				0,7,3,
-				0,4,7,
+	//			0,7,3,
+	//			0,4,7,
 
-				0,1,5,
-				0,5,4
-	};
+	//			0,1,5,
+	//			0,5,4
+	//};
 
-	//NEW CUBE
-	float nextCube[4 * 4 * 2] = {
+	////NEW CUBE
+	//float nextCube[4 * 4 * 2] = {
 
-		-1.0, -1.0,  1.0, 1.0,
-		 1.0, -1.0,  1.0, 1.0,
-		 1.0,  1.0,  1.0, 1.0,
-		-1.0,  1.0,  1.0, 1.0,
-		// back			  
-		-1.0, -1.0, -1.0, 1.0,
-		 1.0, -1.0, -1.0, 1.0,
-		 1.0,  1.0, -1.0, 1.0,
-		-1.0,  1.0, -1.0, 1.0,
+	//	-1.0, -1.0,  1.0, 1.0,
+	//	 1.0, -1.0,  1.0, 1.0,
+	//	 1.0,  1.0,  1.0, 1.0,
+	//	-1.0,  1.0,  1.0, 1.0,
+	//	// back			  
+	//	-1.0, -1.0, -1.0, 1.0,
+	//	 1.0, -1.0, -1.0, 1.0,
+	//	 1.0,  1.0, -1.0, 1.0,
+	//	-1.0,  1.0, -1.0, 1.0,
 
-	};
+	//};
 
-	float newSize = 0.1;
+	//float newSize = 0.1;
 
-	float nextCube2[4 * 4 * 2];
+	//float nextCube2[4 * 4 * 2];
 
-	for (int i = 0; i <8*4; i+=4) {
+	//for (int i = 0; i <8*4; i+=4) {
 
-		nextCube[i+0] *= newSize;
-		nextCube[i+1] *= newSize;
-		nextCube[i+2] *= newSize;
+	//	nextCube[i+0] *= newSize;
+	//	nextCube[i+1] *= newSize;
+	//	nextCube[i+2] *= newSize;
 
-		nextCube2[i + 0] = nextCube[i + 0];
-		nextCube2[i + 1] = nextCube[i + 1];
-		nextCube2[i + 2] = nextCube[i + 2];
-		nextCube2[i + 3] = nextCube[i + 3];
+	//	nextCube2[i + 0] = nextCube[i + 0];
+	//	nextCube2[i + 1] = nextCube[i + 1];
+	//	nextCube2[i + 2] = nextCube[i + 2];
+	//	nextCube2[i + 3] = nextCube[i + 3];
 
-	}
+	//}
 	//NEW CUBE UV
-	float nextCubeUV[2 * 4 * 6] = {
+	/*float nextCubeUV[2 * 4 * 6] = {
 		1.0f , 1.0f,
 		1.0f , 0.0f,
 		0.0f,  0.0f,
@@ -230,7 +227,7 @@ int main(void)
 		0.0f,  1.0f
 
 	};
-
+*/
 
 
 	///*Resize cube*/
@@ -278,7 +275,9 @@ int main(void)
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 	
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_DYNAMIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, 3*noVerts*sizeof(float),cubeObj , GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, 3*noVerts*sizeof(float),cubeObj, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, cube.vertices_size, cube.vertices, GL_DYNAMIC_DRAW);
+
 
 	glEnableVertexAttribArray(0);
 	//glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0);
@@ -292,7 +291,8 @@ int main(void)
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_ind), cube_ind, GL_DYNAMIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, noInds * sizeof(unsigned int), cubeInds, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, noInds * sizeof(unsigned int), cubeInds, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, cube.indices_size, cube.indices, GL_DYNAMIC_DRAW);
 
 
 
@@ -300,7 +300,8 @@ int main(void)
 	glGenBuffers(1, &TBO);
 	glBindBuffer(GL_ARRAY_BUFFER, TBO);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCubeUV), nextCubeUV, GL_DYNAMIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, 2*noVerts*sizeof(float), cubeUV, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, 2*noVerts*sizeof(float), cubeUV, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, cube.uv_size, cube.uvCoordinates, GL_DYNAMIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
@@ -316,7 +317,7 @@ int main(void)
 	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
 
 	
-	
+	cube.delete_data();
 	 delete[]cubeObj;
 
 	 delete[] cubeInds;
@@ -530,7 +531,7 @@ int main(void)
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glDrawElements(GL_TRIANGLES, noInds, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, cube.indices_count, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 
 
