@@ -19,10 +19,11 @@ namespace engine1 {
 
 
 		unsigned int VAO;
-		unsigned int* VBOs;
-		unsigned int* EBOs;
-		unsigned int* TBOs;
+		unsigned int VBOs;
+		unsigned int EBOs;
+		unsigned int TBOs;
 
+		
 		//HAVE A POINTER TO TEXTURES AND SHADERS BUT:...
 		//HOW MANY TEXTURES CAN BE ACTIVE?
 		//HOW MANY SHADERS CAN BE ACTIVE AT ONE TIME?

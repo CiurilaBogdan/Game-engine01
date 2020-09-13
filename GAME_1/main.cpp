@@ -74,10 +74,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 
-
 int main(void)
 {
+	
+	mesh obj1("C:/dev/GAME_1/resources/cube.obj");
+	mesh obj2("C:/dev/GAME_1/resources/monkey.obj");
 
+	mesh cube = obj2 + obj1;
 	
 
 	//transform scene[100];
@@ -101,148 +104,9 @@ int main(void)
 	//printf("MICROSECONDS: %d\n", time_span.count());
 	//
 	//return 0;
-	mesh cube("C:/dev/GAME_1/resources/monkey.obj");
 	
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile("C:/dev/GAME_1/resources/cube.obj", aiProcessPreset_TargetRealtime_MaxQuality);
-	if (!scene) {
-		printf(importer.GetErrorString());
-	}
-
-
 	
-	 unsigned int noVerts = scene->mMeshes[0]->mNumVertices;
 	
-	 float *cubeObj = new float[noVerts*3];
-	 float* cubeUV = new float[noVerts * 2];
-
-	 for (int i = 0; i < noVerts; i++) {
-		 cubeObj[(i * 3)] = scene->mMeshes[0]->mVertices[i].x;
-		 cubeObj[(i * 3) +1] = scene->mMeshes[0]->mVertices[i].y;
-		 cubeObj[(i * 3) +2] = scene->mMeshes[0]->mVertices[i].z;
-
-		 cubeUV[(i * 2)] = scene->mMeshes[0]->mTextureCoords[0][i].x;
-		 cubeUV[(i * 2)+1] = scene->mMeshes[0]->mTextureCoords[0][i].y;
-
-
-	 }
-	 
-
-	 int noFaces = scene->mMeshes[0]->mNumFaces;
-	 int noInds = noFaces * 3;
-	 unsigned int* cubeInds = new unsigned int[noInds];
-	 int ti = 0;
-	 for (int i = 0; i < noFaces; i++) {
-
-		 ti = i*3;
-		 cubeInds[ti+0] = scene->mMeshes[0]->mFaces[i].mIndices[0];
-		 cubeInds[ti+1] = scene->mMeshes[0]->mFaces[i].mIndices[1];
-		 cubeInds[ti+2] = scene->mMeshes[0]->mFaces[i].mIndices[2];
-
-	 }
-
-	
-	 //delete[] cubeInds;
-	//unsigned int cube_ind[] = {
-	//		    0, 2, 1,
-	//			0, 3, 2,
-
-	//			1,2,6,
-	//			6,5,1,
-
-	//			4,5,6,
-	//			6,7,4,
-
-	//			2,3,6,
-	//			6,3,7,
-
-	//			0,7,3,
-	//			0,4,7,
-
-	//			0,1,5,
-	//			0,5,4
-	//};
-
-	////NEW CUBE
-	//float nextCube[4 * 4 * 2] = {
-
-	//	-1.0, -1.0,  1.0, 1.0,
-	//	 1.0, -1.0,  1.0, 1.0,
-	//	 1.0,  1.0,  1.0, 1.0,
-	//	-1.0,  1.0,  1.0, 1.0,
-	//	// back			  
-	//	-1.0, -1.0, -1.0, 1.0,
-	//	 1.0, -1.0, -1.0, 1.0,
-	//	 1.0,  1.0, -1.0, 1.0,
-	//	-1.0,  1.0, -1.0, 1.0,
-
-	//};
-
-	//float newSize = 0.1;
-
-	//float nextCube2[4 * 4 * 2];
-
-	//for (int i = 0; i <8*4; i+=4) {
-
-	//	nextCube[i+0] *= newSize;
-	//	nextCube[i+1] *= newSize;
-	//	nextCube[i+2] *= newSize;
-
-	//	nextCube2[i + 0] = nextCube[i + 0];
-	//	nextCube2[i + 1] = nextCube[i + 1];
-	//	nextCube2[i + 2] = nextCube[i + 2];
-	//	nextCube2[i + 3] = nextCube[i + 3];
-
-	//}
-	//NEW CUBE UV
-	/*float nextCubeUV[2 * 4 * 6] = {
-		1.0f , 1.0f,
-		1.0f , 0.0f,
-		0.0f,  0.0f,
-		0.0f,  1.0f,
-
-		1.0f , 1.0f,
-		1.0f , 0.0f,
-		0.0f,  0.0f,
-		0.0f,  1.0f,
-
-		1.0f , 1.0f,
-		1.0f , 0.0f,
-		0.0f,  0.0f,
-		0.0f,  1.0f,
-
-		1.0f , 1.0f,
-		1.0f , 0.0f,
-		0.0f,  0.0f,
-		0.0f,  1.0f,
-
-		1.0f , 1.0f,
-		1.0f , 0.0f,
-		0.0f,  0.0f,
-		0.0f,  1.0f,
-
-		1.0f , 1.0f,
-		1.0f , 0.0f,
-		0.0f,  0.0f,
-		0.0f,  1.0f
-
-	};
-*/
-
-
-	///*Resize cube*/
-	//for (int i = 0; i < 8 * 5; i += 5) {
-
-	//	cube[i] *=	    newSize;
-	//	cube[i + 1] *=  newSize;
-	//	cube[i + 2] *=  newSize;
-
-	//	cube2[i] *=     newSize;
-	//	cube2[i + 1] *= newSize;
-	//	cube2[i + 2] *= newSize;
-	//}
-	
-
 	GLFWwindow* window;
 
 	if (!glfwInit())
@@ -263,7 +127,7 @@ int main(void)
 	}
 	glfwSetCursorPosCallback(window, mouse_callback);
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+	
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -272,11 +136,11 @@ int main(void)
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_DYNAMIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, 3*noVerts*sizeof(float),cubeObj, GL_DYNAMIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, cube.vertices_size, cube.vertices, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, 3*noVerts*sizeof(float),cubeObj, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, cube.vertices_size, cube.vertices, GL_STATIC_DRAW);
 
 
 	glEnableVertexAttribArray(0);
@@ -289,19 +153,19 @@ int main(void)
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_ind), cube_ind, GL_DYNAMIC_DRAW);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, noInds * sizeof(unsigned int), cubeInds, GL_DYNAMIC_DRAW);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, cube.indices_size, cube.indices, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_ind), cube_ind, GL_STATIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, noInds * sizeof(unsigned int), cubeInds, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, cube.indices_size, cube.indices, GL_STATIC_DRAW);
 
 
 
 	unsigned int TBO;
 	glGenBuffers(1, &TBO);
 	glBindBuffer(GL_ARRAY_BUFFER, TBO);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCubeUV), nextCubeUV, GL_DYNAMIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, 2*noVerts*sizeof(float), cubeUV, GL_DYNAMIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, cube.uv_size, cube.uvCoordinates, GL_DYNAMIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCubeUV), nextCubeUV, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, 2*noVerts*sizeof(float), cubeUV, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, cube.uv_size, cube.uvCoordinates, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
@@ -317,11 +181,15 @@ int main(void)
 	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
 
 	
+	obj2.delete_data();
+	obj1.delete_data();
+
 	cube.delete_data();
-	 delete[]cubeObj;
+
+	/*delete[]cubeObj;
 
 	 delete[] cubeInds;
-	 delete[]cubeUV;
+	 delete[]cubeUV;*/
 	texture myTexture("../resources/uv_grid.jpg");
 	myTexture.set_active();
 
@@ -361,7 +229,7 @@ int main(void)
 
 	glEnable(GL_DEPTH_TEST);
 	
-	
+	glClearColor(0.2, 0.2, 0.3, 1.0);
 	mat4 camMat;
 	
 	while (!glfwWindowShouldClose(window))
@@ -386,19 +254,10 @@ int main(void)
 		
 
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-			/*axis.y = -1.0;
-			rotate = true;*/
-			/*if (cubePos.x > -0.5f) {
-				cubePos.x -= deltaTime * 0.5;
-
-			}*/
+			
 			
 			cam.position.x -= deltaTime * 0.5;
-			//degree += deltaTime * 50 ;
-			//axis.set_scalar(0.0f);
-			/*degrees[1] += deltaTime * 50;
-			axis.y = 1;
-			rotate = true;*/
+			
 			
 			rotationAngles.y += deltaTime * 0.5;
 			//proto_rotate(rotation, rotationAngles, degrees[1]);
@@ -406,19 +265,11 @@ int main(void)
 
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-			/*axis.y = 1.0;
-			rotate = true;*/
-			/*if (cubePos.x < 0.5f) {
-				cubePos.x += deltaTime * 0.5;
-
-			}*/
+			
 			cam.position.y += deltaTime * 0.5;
 			
 
-			//degrees[1] += deltaTime * 50 * -1;
-			////axis.set_scalar(0.0f);
-			//axis.y = 1;
-			//rotate = true;
+			
 			
 			rotationAngles.y -= deltaTime * 0.5;
 			//proto_rotate(rotation, rotationAngles, degrees[1]);
@@ -427,17 +278,8 @@ int main(void)
 
 		}
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-			/*axis.x = -1.0;
-			rotate = true;*/
-			/*if (cubePos.y < 0.5f) {
-				cubePos.y += deltaTime * 0.5;
-
-			}*/
-			cam.position.z -= deltaTime * 0.5;
-			//degrees[0] += deltaTime * 50;
-			////axis.set_scalar(0.0f);
-			//axis.x = 1;
-			//rotate = true;
+		
+			
 
 			rotationAngles.x += deltaTime * 0.5;
 			//proto_rotate(rotation, rotationAngles, degrees[0]);
@@ -445,19 +287,8 @@ int main(void)
 
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-			/*axis.x = 1.0;
-			rotate = true;*/
-			/*if (cubePos.y > -0.5f) {
-				cubePos.y -= deltaTime * 0.5;
-
-			}*/
-			cam.position.z += deltaTime * 0.5;
-
-
-			//degrees[0] += deltaTime * 50*-1;
-			////axis.set_scalar(0.0f);
-			//axis.x = 1;
-			//rotate = true;
+			
+			
 			rotationAngles.x -= deltaTime * 0.5;
 			
 			//proto_rotate(rotation, rotationAngles, degrees[0]);
@@ -526,10 +357,12 @@ int main(void)
 		
 		
 
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_DYNAMIC_DRAW);
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(nextCube), nextCube, GL_STATIC_DRAW);
 		glUniformMatrix4fv(mvpId, 1, GL_FALSE, mvpMat.data);
 
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT );
 
 		glDrawElements(GL_TRIANGLES, cube.indices_count, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);

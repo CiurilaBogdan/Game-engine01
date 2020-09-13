@@ -4,6 +4,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <algorithm>
 
 namespace engine1 {
 
@@ -17,12 +18,15 @@ namespace engine1 {
 		unsigned int vertices_count;
 		unsigned int indices_count;
 
-		size_t vertices_size;
-		size_t indices_size;
-		size_t uv_size;
+		unsigned int vertices_size;
+		unsigned int indices_size;
+		unsigned int uv_size;
 		
-
+		mesh();
 		mesh(const char* path);
+		mesh(const mesh& first,const mesh& other);
+		mesh operator+(const mesh& other)const;
+
 		void delete_data();
 
 	};
