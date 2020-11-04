@@ -11,6 +11,7 @@
 #include "src/graphics/shader.h"
 #include "src/graphics/texture.h"
 #include "src/graphics/mesh.h"
+#include "src/graphics/buffer.h"
 
 #include "src/math/vector3.h"
 #include "src/math/matrix4.h"
@@ -77,11 +78,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 int main(void)
 {
 	
-	mesh obj1("C:/dev/GAME_1/resources/cube.obj");
+	/*mesh obj1("C:/dev/GAME_1/resources/cube.obj");
 	mesh obj2("C:/dev/GAME_1/resources/monkey.obj");
 
 	mesh cube = obj2 + obj1;
-	
+	*/
+	mesh cube = ("C:/dev/GAME_1/resources/cube.fbx");
 
 	//transform scene[100];
 	//for (int i = 0; i < 100; i++) {
@@ -131,7 +133,7 @@ int main(void)
 	unsigned int VAO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-
+	
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -180,9 +182,9 @@ int main(void)
 	//glEnableVertexAttribArray(1);
 	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
 
-	
+	/*
 	obj2.delete_data();
-	obj1.delete_data();
+	obj1.delete_data();*/
 
 	cube.delete_data();
 
@@ -193,7 +195,7 @@ int main(void)
 	texture myTexture("../resources/uv_grid.jpg");
 	myTexture.set_active();
 
-	shader myShader("../shaders/MathPractice3.txt");
+	shader myShader("../shaders/RendererTest1.txt");
 	myShader.set_active();
 
 	int mvpId = glGetUniformLocation(myShader.get_id(), "mvp");
@@ -228,10 +230,10 @@ int main(void)
 	perspMat = mat4::perspective(45, 1024 / 1024, 0.00000001, 100);
 
 	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_PROGRAM_POINT_SIZE);
 	
 	glClearColor(0.2, 0.2, 0.3, 1.0);
 	mat4 camMat;
-	
 	while (!glfwWindowShouldClose(window))
 	{
 
@@ -295,7 +297,20 @@ int main(void)
 			rotation.from_euler(rotationAngles);
 		}
 
-	
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			cubePos.z += deltaTime *5;
+		}
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			cubePos.z -= deltaTime * 5;
+		}
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			cubePos.x += deltaTime * 5;
+		}
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			cubePos.x -= deltaTime * 5;
+		}
+
+
 		/*if (rotate) {
 			degree += deltaTime * 50;
 		}*/
@@ -363,7 +378,7 @@ int main(void)
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glClear(GL_COLOR_BUFFER_BIT );
-
+		//glPolygonMode(GL_FRONT, GL_POINT);
 		glDrawElements(GL_TRIANGLES, cube.indices_count, GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 
